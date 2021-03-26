@@ -1,6 +1,5 @@
 #include <iostream>
 #include <stdexcept>
-#include "d.cpp"
 
 using namespace std;
 
@@ -52,12 +51,14 @@ class Move{
 
 class State{
 	public :
-	State(int h, const int c[]){
+	State(int h, const int c[], int n){
 		heap = h;
+		players = n;
+		playing = 0;
 		p = new int [heap];
-		for(int i = 0; i < h; i++)
+		for(int i = 0; i < h; i++){
 			p[i] = c[i];
-		
+		}
 	}
 	
 	~State(){
@@ -66,12 +67,12 @@ class State{
 	
 	void next (const Move & move) throw (logic_error){
 		if ( move.getSource() < 0 || move.getSource() >= heap  || move.getTarget() < 0 || move.getTarget() >= heap ) throw logic_error ("invalid heap");
-		else if ( move.getSourceCoins() == 0 || move.getSourceCoins() > p[move.getSource()] 
-                  || move.getTargetCoins() >= move.getSourceCoins()) throw logic_error ("invalid coins");
+		else if ( move.getSourceCoins() == 0 || move.getSourceCoins() > p[move.getSource()] || move.getTargetCoins() >= move.getSourceCoins()) 
+			throw logic_error ("invalid coins");
 		else {
-
+			playing = (playing+1)%players; 
 			p[move.getSource()] -= move.getSourceCoins();
-            if(move.getTargetCoins() == 0) return;
+            // if(move.getTargetCoins() == 0) return;
 			p[move.getTarget()] += move.getTargetCoins();
 		}
 	}
@@ -98,17 +99,28 @@ class State{
     	else return p[h];
 	}
     
+	int getPlayers() const{
+		return players;
+	}
+
+	int getPlaying() const{
+		return playing;
+	}
+
     friend ostream & operator << (ostream &out, const State &state){
-    	for(int i = 0; i < state.getHeaps(); i++){
+		int state_heaps = state.getHeaps();
+    	for(int i = 0; i < state_heaps; i++){
     		out << state.getCoins(i);
-    		if (i != (state.getHeaps() -1)) out << ", ";
+    		if (i != (state_heaps -1)) out << ", ";
 		}
+		out << " with " << state.getPlaying() << "/" << state.getPlayers() << " playing next";
 		return out;
 	}
     
 	private:
 		int heap;
 		int *p;
+		int players, playing;
 	
 };
 
