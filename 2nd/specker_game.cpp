@@ -124,3 +124,8 @@ class State{
 	
 };
 
+// int main(){
+// 	int a[4]={1,2,3,4};
+// 	State b(4,a,2);
+// 	cout<<b<<endl;
+// }

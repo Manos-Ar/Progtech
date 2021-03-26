@@ -156,8 +156,9 @@ class RighteousPlayer : public Player{
 
 // int main(){
 	
-// 	cout <<round(17/2.0)<<endl;	
-	
+// 	// cout <<round(17/2.0)<<endl;	
+// 	GreedyPlayer a("tom");
+// 	cout<<a<<endl;
 // }
 
 
