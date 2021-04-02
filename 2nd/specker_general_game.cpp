@@ -59,15 +59,26 @@ class Game{
             cout;
         }
 
-        void show(){
-            for(int i=0; i<heaps_end; i++){
-                cout<<arry_heaps[i]<<" ";
-            }
-            cout<<endl;
+        // void show(){
+        //     for(int i=0; i<heaps_end; i++){
+        //         cout<<arry_heaps[i]<<" ";
+        //     }
+        //     cout<<endl;
 
-            for(int i=0; i<players_end; i++){
-                cout<<*array_players[i]<<endl;
-            }
+        //     for(int i=0; i<players_end; i++){
+        //         cout<<*array_players[i]<<endl;
+        //     }
+        // }
+
+        int getPlayers(){
+            return players_end;
+        }
+
+        const Player *getPlayer(int p) const throw(logic_error){
+            if(p<0 || p>players_end)
+                throw logic_error("Invalid index of player");
+            else
+                return array_players[p];
         }
 
     private:
@@ -84,11 +95,15 @@ class Game{
 //     game.addHeap(17);
 //     // game.addHeap(0);
 //     // game.addHeap(0);
+//     cout<<game.getPlayers()<<endl;
 //     game.addPlayer(new SneakyPlayer("Tom"));
 //     game.addPlayer(new SpartanPlayer("Mary"));
+//     cout<<game.getPlayers()<<endl;
 //     game.addPlayer(new GreedyPlayer("Alan"));
 //     game.addPlayer(new RighteousPlayer("Robin"));
 //     // game.addPlayer(new GreedyPlayer("Mary"));
 //     // game.show();
 //     game.play(cout);
+//     cout<<game.getPlayers()<<endl;
+//     cout<<*(game.getPlayer(0))<<endl;
 // }
