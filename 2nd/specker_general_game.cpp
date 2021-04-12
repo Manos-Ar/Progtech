@@ -75,7 +75,7 @@ class Game{
         }
 
         const Player *getPlayer(int p) const throw(logic_error){
-            if(p<0 || p>players_end)
+            if(p<0 || p>=players_end)
                 throw logic_error("Invalid index of player");
             else
                 return array_players[p];
