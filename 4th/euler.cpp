@@ -135,5 +135,4 @@ int main(){
         graph.add_edge(u,v);
     }
     graph.run();
-    // g.add_edge(0,1);
 }
