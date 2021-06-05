@@ -5,12 +5,7 @@
 #include <set>
 #include <queue>
 #include <functional>
-
 using namespace std;
-
-auto mycomparator(const pair<int,int>& p1, const pair<int,int>& p2){
-    return p1.second < p2.second;
-}
 
 
 class Graph{
@@ -18,6 +13,7 @@ class Graph{
         Graph(int n,int m):N(n),M(m),adj(N){};
         void add_edge(int u, int v, int l){
             adj[u].push_back(make_pair(v,l));
+            adj[v].push_back(make_pair(u,l));
         }
         void add_Q(int q){
             Q=q;
@@ -28,27 +24,29 @@ class Graph{
 
         void run(){
             for(int i=0; i<Q; i++){
-                cout<<"goal "<<i<<" starts\n";
                 results.push_back(dijkstra(i));
             }
         }
 
         void print(){
             int count=0,fills;
-            // vector<int> *path;
             for(int i=0; i<Q; i++){
                 if(results[i]){
                     cout<<"POSSIBLE: ";
                     fills=valid_results[count].first;
-                    // path=&valid_results[count].second;
                     cout<<fills<<" fill(s),";
                     for(int j=valid_results[count].second.size()-1;j>=0; j--)
                         cout<<" "<<valid_results[count].second[j];
                     cout<<endl;
+                    count++;
                 }
                 else
                     cout<<"IMPOSSIBLE\n";
             }
+        }
+
+        bool static mycomparator(const pair<int,int>& p1, const pair<int,int>& p2){
+            return p1.second < p2.second;
         }
 
         bool dijkstra(int g){
@@ -62,45 +60,46 @@ class Graph{
             b=get<1>(goals[g]);
             c=get<2>(goals[g]);
             close.insert(a);
-            fills[a]=0;
+            fills[a]=1;
 
             priority_queue<pair<int,int>,vector<pair<int,int>>,std::function<bool(pair<int,int>, pair<int,int>)>> queue(mycomparator);
             for(unsigned int i=0; i<adj[a].size(); i++){
                 distance=adj[a][i].second;
                 fuel=c-distance;
                 target_node=adj[a][i].first;
-                if(fuel>0){
+                if(fuel>=0){
                     queue.push(make_pair(target_node,fuel));
                     parent[target_node]=a;
-                    fills[target_node]=0;
+                    fills[target_node]=1;
                     close.insert(target_node);
                 }
             }
             if(queue.size()==0){
                 return false;
             }
-            while(close.size()!=(unsigned int)N || queue.size()==0){
-                
+
+            while(close.size()!=(unsigned int) N ){
+                if(queue.size()==0)
+                    break;
                 temp=queue.top();
+                queue.pop();
                 parent_node=temp.first;
                 fuel=temp.second;
                 count=fills[parent_node];
-
                 for(unsigned int i=0; i<adj[parent_node].size();i++){
                     target_node=adj[parent_node][i].first;
                     distance=adj[parent_node][i].second;
                     fuel_remain=fuel-distance;
-
-                    if(close.find(target_node)==close.end())
+                    if(close.count(target_node))
                         continue;
 
-                    if(fuel_remain>0){
+                    if(fuel_remain>=0){
                         queue.push(make_pair(target_node,fuel_remain));
                         parent[target_node]=parent_node;
                         fills[target_node]=count;
                         close.insert(target_node);
                     }
-                    else if(c-distance>0){
+                    else if(c-distance>=0){
                         fuel_remain=c-distance;
                         queue.push(make_pair(target_node,fuel_remain));
                         parent[target_node]=parent_node;
@@ -117,6 +116,7 @@ class Graph{
                 vector<int> path;
                 count=fills[b];
                 parent_node=parent[b];
+                path.push_back(b);
                 path.push_back(parent_node);
                 while(parent_node!=a){
                     parent_node=parent[parent_node];
@@ -149,7 +149,6 @@ int main(){
         cin >>a>>b>>c;
         graph.add_goals(a,b,c);
     }
-    cout<<"read\n";
     graph.run();
     graph.print();
 }
